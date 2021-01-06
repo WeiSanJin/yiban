@@ -42,16 +42,22 @@ if __name__ == '__main__':
             print("尝试重新二次登录")
             yb.auth()
         # 获取最新的表单连接,返回最终提交的表单数据
-        form_data = getInitiateId(yb, 1)
+        form_data = getInitiateId(yb, 2)
 
         # 获取待打卡列表
         all_task = yb.getUncompletedList()
         if len(all_task["data"]) == 0:
             print("没有待完成的打卡任务")
         for i in all_task["data"]:
+            # print(i)
+            if (i["Title"] == '11月5-6日社区晚值班宿舍检查违纪学生反馈'):
+                print("WeiSanJin.submit       ：没有待完成的打卡任务!" + '\n')
+                break
             task_detail = yb.getTaskDetail(i["TaskId"])["data"]
             if task_detail["WFId"] != yb.WFId:
                 print("表单已更新,得更新程序了")
+                print("WeiSanJin：1. 查看WFId 是否已经更新")
+                print("WeiSanJin：2. 可以尝试看看打开列表中有无任务卡住，进行跳过无关任务(52-54行)")
                 exit()
             ex = {"TaskId": task_detail["Id"],
                   "title": "任务信息",

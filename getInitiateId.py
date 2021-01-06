@@ -12,18 +12,22 @@ def getInitiateId(yb, type):
     """
     # 通过访问任务列表获取TaskId
     taskList = yb.taskList()
-    TaskId = taskList.get('data')['list'][0]["LinkTo"].split('=')[1]
+    TaskId = taskList.get('data')['list'][type]["LinkTo"].split('=')[1]
     CompletedList = yb.getTaskDetail(TaskId)
     # 我的任务
-    InitiateId = CompletedList.get('data')['InitiateId']
-    if TaskId == 'view&id' or InitiateId is not None:
-        for i in range(10):
-            print(i)
-            TaskId = taskList.get('data')['list'][i]["LinkTo"].split('=')[1]
-            if TaskId != 'view&id':
-                CompletedList = yb.getTaskDetail(TaskId)
-                InitiateId = CompletedList.get('data')['InitiateId']
-                break
+    # 对< InitiateId >进行异常捕获，寻找到最新的值
+    try:
+        InitiateId = CompletedList.get('data')['InitiateId']
+    except KeyError:
+        if TaskId == 'view&id' or InitiateId is not None:
+            for i in range(10):
+                TaskId = taskList.get('data')['list'][i]["LinkTo"].split('=')[1]
+                if TaskId != 'view&id':
+                    CompletedList = yb.getTaskDetail(TaskId)
+                    InitiateId = CompletedList.get('data')['InitiateId']
+                           # WeiSanJin.getInitiateId：
+                    print("WeiSanJin.异常处理      ：<- InitiateId -> " + str(InitiateId))
+                    break
 
     shareUrl = 'https://app.uyiban.com/workflow/client/#/share?initiateId=' + InitiateId
 
