@@ -10,7 +10,7 @@ import requests
 
 
 class YiBan:
-    WFId = "e416fbced8945a7f6811d50c1563adc0"  # 疫情表单：固定表单值固定 每个大学可能不一样需要自行抓包 此处为闽江学院
+    WFId = "e5eee98118d0eeed9715b705931bd81f"  # 疫情表单：固定表单值固定 每个大学可能不一样需要自行抓包 此处为闽江学院软件学院
     CSRF = 'a6b057f9a934b7d1b652fba42490297f'  # 固定头 无需更改
     COOKIES = {"csrf_token": CSRF}  # 固定cookie 无需更改
     HEADERS = {"Origin": "https://c.uyiban.com", "User-Agent": "yiban"}  # 固定头 无需更改
@@ -32,18 +32,16 @@ class YiBan:
 
     # 用户登录
     def login(self):
-        params = {
-            "account": self.account,
-            "ct": 2,
-            "identify": 0,
-            "v": "4.7.4",
-            "passwd": self.passwd
+        v3Params = {
+            "mobile": self.account,
+            "password": self.passwd,
+            "imei": '1'
         }
-        r = self.request(url='https://mobile.yiban.cn/api/v2/passport/login', params=params)
+        r = self.request(url='https://mobile.yiban.cn/api/v3/passport/login', params=v3Params)
 
         if r is not None and str(r["response"]) == "100":
-            self.access_token = r["data"]["access_token"]
-            self.name = r["data"]["user"]["name"]
+            self.access_token = r["data"]["user"]["access_token"]
+            self.name = r["data"]["user"]["nick"]
             print('\n' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + '  登录成功：' + str(self.name))
             return r
         else:
